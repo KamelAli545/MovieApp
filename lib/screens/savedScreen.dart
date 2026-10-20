@@ -6,7 +6,6 @@ import 'package:movieapp/screens/DetailsScreen.dart';
 
 class SavedScreen extends StatelessWidget {
   const SavedScreen({super.key});
-
   static const _imgBase = 'https://image.tmdb.org/t/p/w200';
 
   @override

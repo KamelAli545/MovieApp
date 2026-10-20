@@ -131,7 +131,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                            )
                           ),
                           TextSpan(
-                            text: 'Sign Up',
+                            text: 'Login',
                             style: TextStyle(color: Colors.red,
                                 fontWeight: FontWeight.bold),
                           ),
