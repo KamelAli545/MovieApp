@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:movieapp/cubit/savedServices.dart';
 import 'package:movieapp/model/Results.dart';
-final kBg = Color(0xFF242A32);
+
+final kBg = const Color(0xFF242A32);
 
 class DetailsScreen extends StatelessWidget {
   const DetailsScreen({super.key, required this.movie});
@@ -12,20 +14,34 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final service = SavedService();
     final image = movie.backdropPath ?? movie.posterPath;
+
     return Scaffold(
       backgroundColor: kBg,
-
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-          backgroundColor: kBg,
-
-          title: Text(movie.title ?? '',
-            style: TextStyle(
-                color: Colors.white
-            ),
-
-          )),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: kBg,
+        title: Text(
+          movie.title ?? '',
+          style: const TextStyle(color: Colors.white),
+        ),
+        actions: [
+          StreamBuilder<bool>(
+            stream: service.watchIsSaved(movie.id ?? 0),
+            builder: (context, snap) {
+              final isSelected = snap.data ?? false;
+              return IconButton(
+                onPressed: () => service.toggle(movie),
+                icon: Icon(
+                  isSelected ? Icons.favorite_rounded : Icons.favorite_outline,
+                  color: isSelected ? Colors.red : Colors.white,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,10 +69,7 @@ class DetailsScreen extends StatelessWidget {
                 children: [
                   Text(
                     movie.title ?? '',
-                    style: TextStyle(
-                        color: Colors.white
-                    ),
-
+                    style: const TextStyle(color: Colors.white),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -66,37 +79,26 @@ class DetailsScreen extends StatelessWidget {
                       Text(
                         '${movie.voteAverage?.toStringAsFixed(1) ?? '-'}'
                             '  (${movie.voteCount ?? 0} votes)',
-                        style: TextStyle(
-                            color: Colors.white
-                        ),
-
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Text('Release date: ${movie.releaseDate ?? '-'}',
-                  style: TextStyle(
-                    color: Colors.white
-                  ),
-                  ),
-
-                  const SizedBox(height: 16),
                   Text(
-                    'Overview',
-                    style: TextStyle(
-                      color: Colors.white
+                    'Release date: ${movie.releaseDate ?? '-'}',
+                    style: const TextStyle(color: Colors.white),
                   ),
-
-            ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Overview',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   const SizedBox(height: 6),
                   Text(
                     (movie.overview == null || movie.overview!.isEmpty)
                         ? 'No overview available.'
                         : movie.overview!,
-                    style: TextStyle(
-                        color: Colors.white
-                    ),
-
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ],
               ),

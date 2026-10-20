@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movieapp/MovieCard.dart';
 import 'package:movieapp/cubit/movie_cubit.dart';
+import 'package:movieapp/widgets/categoryRow.dart';
+import 'package:movieapp/widgets/movieTab.dart';
+import 'package:movieapp/widgets/drawer.dart';
 
 class MovieScreen extends StatefulWidget {
   const MovieScreen({super.key});
@@ -16,22 +19,33 @@ class _MovieScreenState extends State<MovieScreen> {
   final kBg = Color(0xFF242A32);
   final searchController = TextEditingController();
   String searchQuery = '';
+  int _selectedTab=0;
 
   @override
   void dispose() {
     searchController.dispose();
     super.dispose();
   }
+  void _selectTab(int index) {
+    searchController.clear();
+    setState(() {
+      _selectedTab = index;
+      searchQuery = '';
+    });
+    context.read<MovieCubit>().loadCategory(movieTabs[index].category);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: AppDrawer(),
       backgroundColor: kBg,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
 
         backgroundColor: kBg,
-        title: Text("What do you want to watch?",
+
+      title: Text("What do you want to watch?",
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 15,
@@ -43,6 +57,7 @@ class _MovieScreenState extends State<MovieScreen> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: TextField(
+              cursorColor: Colors.white,
               style: TextStyle(color: Colors.white),
               controller: searchController,
               onChanged: (value) {
@@ -50,45 +65,59 @@ class _MovieScreenState extends State<MovieScreen> {
                 context.read<MovieCubit>().searchMovie(value);
               },
               decoration: InputDecoration(
-                suffixIcon: Icon(Icons.search),
+                focusedBorder:OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(color: Colors.white)
+                ),
+
+                suffixIcon: Icon(Icons.search,
+                color: Colors.white,
+                ),
                 hintText: "Search Movie",
+                hintStyle: TextStyle(
+                  color: Colors.white
+                ),
                 border: OutlineInputBorder(
+
                     borderRadius: BorderRadius.circular(20)
                 ),
               ),
             ),
           ),
+          CategoryRow(
+            selected: _selectedTab,
+            onTap: _selectTab,
+          ),
           SizedBox(height: 10,),
           Expanded(
             child: BlocBuilder<MovieCubit, MovieState>(
               builder: (context, state) {
-                if (state is MovieLoading){
-                  return Center(child: CircularProgressIndicator(),);
-                }if(state is MovieError){
-                  return Center(
-                    child: Text(state.message),
-                  );
-                }if(state is MovieSuccess) {
+                if (state is MovieLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state is MovieError) {
+                  return Center(child: Text(state.message, style: const TextStyle(color: Colors.white)));
+                }
+                if (state is MovieSuccess) {
                   if (state.movies.isEmpty) {
-                    return Center(child: Text("No Product Found"),);
+                    return const Center(child: Text('No Movies Found', style: TextStyle(color: Colors.white)));
                   }
-                  return SizedBox(
-                    height: 200,
-                    child: ListView.separated(
-                      separatorBuilder: (context,index)=>SizedBox(
-                      width: 16,
-                      ),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: state.movies.length,
-                      itemBuilder: (context, index) =>
-                          MovieCard(movie: state.movies[index]),
+                  return GridView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    itemCount: state.movies.length,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 14,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 0.62,
                     ),
+                    itemBuilder: (context, index) => MovieCard(movie: state.movies[index]),
                   );
-                }return SizedBox.shrink();
+                }
+                return const SizedBox.shrink();
               },
             ),
-          ),
-        ],
+          )        ],
       ),
     );
   }

@@ -28,5 +28,14 @@ class ApiFilms {
     queryParameters: {'query':query},);
     return MovieModel.fromJson(response.data);
   }
+  Future<MovieModel> getNowPlaying() async {
+    final response = await dio.get('/movie/now_playing');
+    return MovieModel.fromJson(response.data);
+  }
+
+  Future<MovieModel> getUpcoming() async {
+    final response = await dio.get('/movie/upcoming');
+    return MovieModel.fromJson(response.data);
+  }
 
 }
