@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movieapp/MovieCard.dart';
 import 'package:movieapp/cubit/movie_cubit.dart';
 import 'package:movieapp/widgets/categoryRow.dart';
+import 'package:movieapp/widgets/movieSkeleton.dart';
 import 'package:movieapp/widgets/movieTab.dart';
 import 'package:movieapp/widgets/drawer.dart';
 
@@ -93,8 +95,17 @@ class _MovieScreenState extends State<MovieScreen> {
             child: BlocBuilder<MovieCubit, MovieState>(
               builder: (context, state) {
                 if (state is MovieLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+                  return GridView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    itemCount: 6,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 14,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 0.5,
+                    ),
+                    itemBuilder: (_, __) => const MovieSkeleton(),
+                  );                }
                 if (state is MovieError) {
                   return Center(child: Text(state.message, style: const TextStyle(color: Colors.white)));
                 }
@@ -109,9 +120,12 @@ class _MovieScreenState extends State<MovieScreen> {
                       crossAxisCount: 2,
                       mainAxisSpacing: 14,
                       crossAxisSpacing: 12,
-                      childAspectRatio: 0.62,
+                      childAspectRatio: 0.5,
                     ),
-                    itemBuilder: (context, index) => MovieCard(movie: state.movies[index]),
+                    itemBuilder: (context, index) => MovieCard(movie: state.movies[index]).
+                      animate(delay: (index <8?index*80:0).ms)
+                    .fadeIn()
+                    .slideY(begin: 0.2,),
                   );
                 }
                 return const SizedBox.shrink();
