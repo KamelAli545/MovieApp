@@ -8,23 +8,23 @@ class SavedService {
   String get _uid => FirebaseAuth.instance.currentUser?.uid ?? '';
 
   CollectionReference<Map<String, dynamic>> get _saved =>
-      _db.collection('users').doc(_uid).collection('saved');
+      _db.collection('users').doc(_uid).collection('savedMovies');
 
-  /// قايمة الأفلام المحفوظة، بتتحدث لوحدها
   Stream<List<Movie>> watchSaved() {
+    if (_uid.isEmpty) return Stream.value(const []);
     return _saved
         .orderBy('savedAt', descending: true)
         .snapshots()
         .map((snap) => snap.docs.map((d) => _fromDoc(d.data())).toList());
   }
 
-  /// هل الفيلم ده محفوظ؟
   Stream<bool> watchIsSaved(int movieId) {
+    if (_uid.isEmpty) return Stream.value(false);
     return _saved.doc('$movieId').snapshots().map((d) => d.exists);
   }
 
-  /// لو محفوظ يشيله، لو مش محفوظ يحفظه
   Future<void> toggle(Movie movie) async {
+    if (_uid.isEmpty || movie.id == null) return;
     final ref = _saved.doc('${movie.id}');
     final snap = await ref.get();
     if (snap.exists) {
@@ -45,13 +45,13 @@ class SavedService {
   }
 
   Movie _fromDoc(Map<String, dynamic> d) => Movie(
-    id: d['id'],
-    title: d['title'],
-    posterPath: d['posterPath'],
+    id: (d['id'] as num?)?.toInt(),
+    title: d['title'] as String?,
+    posterPath: d['posterPath'] as String?,
     voteAverage: (d['voteAverage'] as num?)?.toDouble(),
-    overview: d['overview'],
-    releaseDate: d['releaseDate'],
-    backdropPath: d['backdropPath'],
-    voteCount: d['voteCount'],
+    overview: d['overview'] as String?,
+    releaseDate: d['releaseDate'] as String?,
+    backdropPath: d['backdropPath'] as String?,
+    voteCount: (d['voteCount'] as num?)?.toInt(),
   );
 }
