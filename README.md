@@ -1,16 +1,44 @@
-# movieapp
+# Movie App
 
-A new Flutter project.
+A Flutter movie app that shows popular and top-rated films from TMDB, with search, a watch list, and Firebase authentication.
+
+## Screenshots
+<!-- Add screenshots here -->
+
+## Features
+- Home screen with a top carousel and a 3-column poster grid
+- Category tabs: Now Playing, Upcoming, Top Rated, Popular
+- Search with results and a no-results state
+- Saved (watch) list
+- Register and login with Firebase Auth
+- Profile drawer with logout confirmation
+- Dark theme
+
+## Tech Stack
+- Flutter & Dart
+- flutter_bloc (Cubit)
+- dio (HTTP client)
+- Firebase Authentication
+- API: [TMDB](https://www.themoviedb.org/documentation/api)
 
 ## Getting Started
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/KamelAli545/MovieApp.git
+   ```
+2. Install dependencies:
+   ```bash
+   flutter pub get
+   ```
+3. Add your TMDB API key in `core/Apiflims.dart`. Do not commit your real key.
+4. Set up Firebase with `flutterfire configure` or add `google-services.json` to `android/app/`.
+5. Run the app:
+   ```bash
+   flutter run
+   ```
 
-This project is a starting point for a Flutter application.
+## Roadmap
+- [ ] Movie details screen
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Author
+Kamel Ali Kamel · [LinkedIn](https://linkedin.com/in/kamel-ali03) · [GitHub](https://github.com/KamelAli545)
