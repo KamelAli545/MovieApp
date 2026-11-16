@@ -3,7 +3,7 @@
 A Flutter movie app that shows popular and top-rated films from TMDB, with search, a watch list, and Firebase authentication.
 
 ## Screenshots
-<!-- Add screenshots here -->
+![Movie App Showcase](Movie App – Screens.png)
 
 ## Features
 - Home screen with a top carousel and a 3-column poster grid
